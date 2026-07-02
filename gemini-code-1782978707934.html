@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROBEST ĂN NHANH</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        /* Thông tin sinh viên ở đầu trang */
+        .student-info {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        /* Header cửa hàng */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        /* Thanh tìm kiếm & Phân trang */
+        .controls-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .search-box {
+            padding: 10px 15px;
+            width: 300px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .search-box:focus {
+            border-color: #e74c3c;
+        }
+        /* Danh sách món ăn */
+        .products-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            min-height: 450px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        .product-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 20px;
+            text-align: center;
+        }
+        .product-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .product-price {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .order-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .order-btn:hover {
+            background-color: #c0392b;
+        }
+        /* Phân trang buttons */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid #e74c3c;
+            background-color: white;
+            color: #e74c3c;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .page-btn.active, .page-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
+        /* Khu vực kiểm tra mã đơn hàng sau khi đặt */
+        .track-section {
+            background-color: #edf2f7;
+            padding: 30px 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .track-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        /* Popup đặt hàng & Thanh toán QR */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .qr-image {
+            width: 250px;
+            height: 250px;
+            margin: 15px auto;
+            display: block;
+            border: 2px solid #ddd;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .notice-box {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="student-info">
+        MÃ SINH VIÊN: 2516030087 | HỌ VÀ TÊN: BÙI NHƯ NGỌC
+    </div>
+
+    <header>
+        <h1>ROBEST ĂN NHANH</h1>
+        <p>Thực đơn đa dạng - Phục vụ siêu tốc</p>
+    </header>
+
+    <div class="controls-container">
+        <h2>Thực Đơn Món Ăn</h2>
+        <input type="text" id="search-input" class="search-box" placeholder="Tìm kiếm món ăn..." oninput="searchFood()">
+    </div>
+
+    <div class="products-grid" id="products-container">
+        </div>
+
+    <div class="pagination" id="pagination-container"></div>
+
+    <section class="track-section">
+        <div class="track-container">
+            <h3>🔍 TÌM KIẾM ĐƠN HÀNG ĐÃ ĐẶT</h3>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Nhập Mã Đơn Hàng của bạn để kiểm tra trạng thái trên hệ thống</p>
+            <input type="text" id="search-order-id" class="search-box" style="width: 100%; margin-bottom: 10px;" placeholder="Nhập Mã Đơn Hàng (VD: ROBEST-XXXX)...">
+            <button class="order-btn" onclick="checkOrder()">Tìm Kiếm Đơn Hàng</button>
+            <div id="order-result" style="margin-top: 15px; font-weight: bold; color: #27ae60;"></div>
+        </div>
+    </section>
+
+    <div class="modal" id="order-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modal-food-title">Tên Món Ăn</h3>
+            <p style="color: #e74c3c; font-weight: bold; margin-top: 5px;" id="modal-food-price">0đ</p>
+            
+            <hr style="margin: 15px 0; border: 0.5px solid #eee;">
+            
+            <h4>Bước 1: Quét mã QR thanh toán</h4>
+            <img src="7384c697ca774b291266.jpg" alt="Mã QR Thanh Toán BIDV" class="qr-image">
+            
+            <p style="font-size: 13px; color: #555;">
+                Chủ TK: <strong>Bui Nhu Ngoc</strong><br>
+                Số TK: <strong>8889382471</strong> (BIDV)<br>
+                Nội dung CK: <strong id="transfer-content" style="color: #2980b9;">ROBEST AN NHANH</strong>
+            </p>
+
+            <div class="notice-box">
+                <strong>Bước 2:</strong> Sau khi chuyển khoản thành công, hãy bấm vào nút bên dưới để điền thông tin giao hàng vào Google Form nhằm hoàn tất đơn hàng. 
+            </div>
+
+            <button class="order-btn" style="margin-top: 15px; background-color: #27ae60;" id="submit-form-btn" onclick="openGoogleForm()">
+                Xác Nhận & Điền Form Giao Hàng
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu danh sách 10 loại đồ ăn
+        const products = [
+            { id: 1, name: "Gà Rán Giòn Cay", price: "45.000đ", image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=400" },
+            { id: 2, name: "Hamburger Bò Phô Mai", price: "55.000đ", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400" },
+            { id: 3, name: "Khoai Tây Chiên Lắc Phô Mai", price: "30.000đ", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400" },
+            { id: 4, name: "Pizza Hải Sản Size M", price: "119.000đ", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400" },
+            { id: 5, name: "Mì Ý Sốt Bò Bằm", price: "50.000đ", image: "https://images.unsplash.com/photo-1516685018646-549198525c1b?w=400" },
+            { id: 6, name: "Kimbap Hàn Quốc Chiên Xù", price: "35.000đ", image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400" },
+            { id: 7, name: "Bánh Mì Dân Tổ Đặc Biệt", price: "25.000đ", image: "https://images.unsplash.com/photo-1600454021850-3c762a34f999?w=400" },
+            { id: 8, name: "Trà Sữa Trân Châu Đường Đen", price: "30.000đ", image: "https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400" },
+            { id: 9, name: "Nem Chua Rán Hà Nội", price: "40.000đ", image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=400" },
+            { id: 10, name: "Xiên Que Nướng Thập Cẩm", price: "45.000đ", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400" }
+        ];
+
+        // Cấu hình phân trang (3 món trên 1 trang)
+        const itemsPerPage = 3;
+        let currentPage = 1;
+        let filteredProducts = [...products];
+        let currentSelectedFood = "";
+
+        // ⚠️ ĐƯỜNG LINK GOOGLE FORM CỦA BẠN (Dán link đã sao chép ở phần 1 vào đây)
+        const googleFormUrl = "https://docs.google.com/forms/d/e/XXXXX/viewform";
+
+        // Hàm hiển thị danh sách món ăn theo trang
+        function renderProducts() {
+            const container = document.getElementById("products-container");
+            container.innerHTML = "";
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#999;'>Không tìm thấy món ăn nào!</p>";
+                renderPagination(0);
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageItems = filteredProducts.slice(startIndex, endIndex);
+
+            pageItems.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="product-img">
+                    <div class="product-info">
+                        <h3 class="product-title">${item.name}</h3>
+                        <p class="product-price">${item.price}</p>
+                        <button class="order-btn" onclick="openOrderModal('${item.name}', '${item.price}')">Đặt Món Ngay</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            renderPagination(filteredProducts.length);
+        }
+
+        // Hàm tạo các nút bấm phân trang
+        function renderPagination(totalItems) {
+            const container = document.getElementById("pagination-container");
+            container.innerHTML = "";
+
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            if (totalPages <= 1) return;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderProducts();
+                    window.scrollTo({ top: 300, behavior: 'smooth' });
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        // Chức năng tìm kiếm món ăn theo thời gian thực
+        function searchFood() {
+            const keyword = document.getElementById("search-input").value.toLowerCase().trim();
+            filteredProducts = products.filter(item => item.name.toLowerCase().includes(keyword));
+            currentPage = 1; // reset về trang 1 khi search
+            renderProducts();
+        }
+
+        // Tạo chuỗi ngẫu nhiên làm mã đơn hàng định danh (VD: ROBEST-8492)
+        function generateOrderId() {
+            return "ROBEST-" + Math.floor(1000 + Math.random() * 9000);
+        }
+
+        // Mở cửa sổ đặt hàng & hiển thị QR thanh toán
+        function openOrderModal(name, price) {
+            currentSelectedFood = name;
+            const orderId = generateOrderId();
+            
+            document.getElementById("modal-food-title").innerText = "Món ăn: " + name;
+            document.getElementById("modal-food-price").innerText = "Giá: " + price;
+            
+            // Nội dung chuyển khoản yêu cầu khách nhập đúng Mã đơn hàng để đối soát
+            document.getElementById("transfer-content").innerText = orderId;
+
+            document.getElementById("order-modal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("order-modal").style.display = "none";
+        }
+
+        // Chuyển hướng người dùng sang Google Form để điền thông tin sau khi quét QR
+        function openGoogleForm() {
+            const currentOrderId = document.getElementById("transfer-content").innerText;
+            alert("Hệ thống sẽ chuyển bạn đến Google Form. Hãy nhớ Mã Đơn Hàng của bạn là: " + currentOrderId + " để điền vào Form nhé!");
+            window.open(googleFormUrl, "_blank");
+            closeModal();
+        }
+
+        // Chức năng tìm kiếm / Kiểm tra đơn hàng thủ công sau khi đặt
+        function checkOrder() {
+            const orderIdInput = document.getElementById("search-order-id").value.trim();
+            const resultBox = document.getElementById("order-result");
+
+            if(orderIdInput === "") {
+                resultBox.style.color = "#e74c3c";
+                resultBox.innerText = "Vui lòng nhập Mã Đơn Hàng cần tìm!";
+                return;
+            }
+
+            // Gợi ý phản hồi kiểm tra mã đơn giả lập (Vì dữ liệu thực nằm trên Google Sheet bảo mật)
+            resultBox.style.color = "#27ae60";
+            resultBox.innerHTML = `🔍 Hệ thống tìm thấy mã <strong>${orderIdInput}</strong> trên Google Sheet!<br>
+            <span style="color:#f39c12; font-size:14px;">Trạng thái: Shop đã tiếp nhận từ Gmail và đang chuẩn bị món ăn giao cho bạn.</span>`;
+        }
+
+        // Chạy hiển thị danh sách khi tải trang
+        window.onload = renderProducts;
+    </script>
+</body>
+</html>
